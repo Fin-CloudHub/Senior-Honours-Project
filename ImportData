@@ -1,0 +1,54 @@
+###########################General information###################
+#000 ——> z=3
+#001 ——> z=2
+#002 ——> z=1
+#003 ——> z=0.5
+#004 ——> z=0
+
+#For stable version, which is all you need:
+
+#path/python -m pip install Pylians
+
+###########################To import the particle data###################
+import readgadget
+import numpy as np
+
+# input files
+snapshot = '/Users/finlaysime/Desktop/Senior Honour Project/snapdir_004/snap_004'
+ptype    = [1] #[1](CDM), [2](neutrinos) or [1,2](CDM+neutrinos)
+
+# read header
+header   = readgadget.header(snapshot)
+BoxSize  = header.boxsize/1e3  #Mpc/h
+Nall     = header.nall         #Total number of particles
+Masses   = header.massarr*1e10 #Masses of the particles in Msun/h
+Omega_m  = header.omega_m      #value of Omega_m
+Omega_l  = header.omega_l      #value of Omega_l
+h        = header.hubble       #value of h
+redshift = header.redshift     #redshift of the snapshot
+Hubble   = 100.0*np.sqrt(Omega_m*(1.0+redshift)**3+Omega_l)#Value of H(z) in km/s/(Mpc/h)
+
+# read positions, velocities and IDs of the particles
+pos_dm = readgadget.read_block(snapshot, "POS ", ptype)/1e3 #positions in Mpc/h
+vel_dm = readgadget.read_block(snapshot, "VEL ", ptype)     #peculiar velocities in km/s
+ids_dm = readgadget.read_block(snapshot, "ID  ", ptype)-1
+
+#############################To get the halo catalog######################################
+
+f_catalog = '/Users/finlaysime/Desktop/Senior Honour Project/halos/1/out_4_pid.list' 
+
+# read the halo catalog
+data = np.loadtxt(f_catalog)
+
+pid  = data[:,41]
+idx = pid == -1  #ids of the halos
+data_halo = data[idx]
+
+#Units: Masses in Msun / h
+#Units: Positions in Mpc / h (comoving)
+#Units: Velocities in km / s (physical, peculiar)
+#BoxSize=1000.0
+
+halo_pos = data_halo[:,8:11]
+halo_velocity = data_halo[:,11:14]
+halo_mass = data_halo[:,2]
