@@ -1,0 +1,116 @@
+###########################General information###################
+#000 ——> z=3
+#001 ——> z=2
+#002 ——> z=1
+#003 ——> z=0.5
+#004 ——> z=0
+
+###########################To import the particle data###################
+import readgadget
+import numpy as np
+import MAS_library as MASL
+
+# input files
+snapshot = '/Users/finlaysime/Desktop/Senior Honour Project/snapdir_004/snap_004'
+ptype    = [2] #[1](CDM), [2](neutrinos) or [1,2](CDM+neutrinos)
+print("Snapshot files imported")
+
+# read header
+header   = readgadget.header(snapshot)
+BoxSize  = header.boxsize/1e3  #Mpc/h
+Nall     = header.nall         #Total number of particles
+Masses   = header.massarr*1e10 #Masses of the particles in Msun/h
+Omega_m  = header.omega_m      #value of Omega_m
+Omega_l  = header.omega_l      #value of Omega_l
+h        = header.hubble       #value of h
+redshift = header.redshift     #redshift of the snapshot
+Hubble   = 100.0*np.sqrt(Omega_m*(1.0+redshift)**3+Omega_l)#Value of H(z) in km/s/(Mpc/h)
+
+# read positions, velocities and IDs of the particles
+pos_dm = readgadget.read_block(snapshot, "POS ", ptype)/1e3 #positions in Mpc/h
+vel_dm = readgadget.read_block(snapshot, "VEL ", ptype)     #peculiar velocities in km/s
+ids_dm = readgadget.read_block(snapshot, "ID  ", ptype)-1
+print("Positions & velocities acquired")
+
+#############################To get the halo catalog######################################
+
+f_catalog = '/Users/finlaysime/Desktop/Senior Honour Project/halos/1/out_4_pid.list' 
+
+# read the halo catalog
+data = np.loadtxt(f_catalog)
+print("Halo data imported")
+
+pid  = data[:,41]
+idx = pid == -1  #ids of the halos
+data_halo = data[idx]
+
+#Units: Masses in Msun / h
+#Units: Positions in Mpc / h (comoving)
+#Units: Velocities in km / s (physical, peculiar)
+#BoxSize=1000.0
+
+halo_pos = data_halo[:,8:11]
+halo_velocity = data_halo[:,11:14]
+halo_mass = data_halo[:,2]
+print("Halo positions, velocites, & masses acquired")
+
+#############################Build density field######################################
+
+grid = 512 #the density field will have grid^3 voxels
+MAS = 'CIC' #Mass-assignment scheme:'NGP', 'CIC', 'TSC', 'PCS'
+verbose = True #whether to print information about progress
+
+#Print some information
+print('BoxSize: %.3f Mpc/h'%BoxSize)
+print('Redshift: %.3f'%redshift)
+print('%.3f < X < %.3f'%(np.min(pos_dm[:,0]), np.max(pos_dm[:,0])))
+print('%.3f < Y < %.3f'%(np.min(pos_dm[:,1]), np.max(pos_dm[:,1])))
+print('%.3f < Z < %.3f'%(np.min(pos_dm[:,2]), np.max(pos_dm[:,2])))
+
+delta = np.zeros((grid,grid,grid), dtype=np.float32)
+
+# construct 3D density field
+
+MASL.MA(pos_dm, delta, BoxSize, MAS, verbose=verbose)
+
+# the sum of the values in all voxels should be equal to the number of particles
+print('%.3f should be equal to\n%.3f'%(np.sum(delta, dtype=np.float64), pos_dm.shape[0]))
+
+delta *= Masses[1]
+# now check that the mass in the density field is equal to the total mass in the density
+# field is equal to the total mass in the simulation
+print('%.3e should be equal to\n%.3e'%(np.sum(delta, dtype=np.float64),
+                                       pos_dm.shape[0]*Masses[1]))
+
+# the box is 1000 Mpc/h and every voxel has ~2 Mpc/h size. We can take ~5 slices to consider
+# a region with a ~10 Mpc/h width
+mean_density = np.mean(delta[:5,:,:],axis=0) #Take the first 5 component along the first
+# axis and compute the mean value
+print('Image shape:',mean_density.shape)
+print('%.3e < mass < %.3e'%(np.min(mean_density), np.max(mean_density)))
+
+# now lets consider the particles in that slide
+indexes = np.where((pos_dm[:,0]<10))
+pos_slide = pos_dm[indexes]
+print('%.3f < X < %.3f'%(np.min(pos_slide[:,0]), np.max(pos_slide[:,0])))
+print('%.3f < Y < %.3f'%(np.min(pos_slide[:,1]), np.max(pos_slide[:,1])))
+print('%.3f < Z < %.3f'%(np.min(pos_slide[:,2]), np.max(pos_slide[:,2])))
+
+import matplotlib.pyplot as plt
+from pylab import *
+fig = figure(figsize=(20,10))
+ax1 = fig.add_subplot(121)
+ax2 = fig.add_subplot(122)
+ax2.set_aspect('equal')
+ax1.imshow(mean_density.T, cmap='gnuplot', vmin=0.0, vmax=1e13, origin='lower')
+ax2.scatter(pos_slide[:,1], pos_slide[:,2], s=0.001, c='r')
+plt.show()
+
+# at this point, delta contains the effective number of particles in each voxel
+# now compute overdensity and density contrast
+delta /= np.mean(delta, dtype=np.float64);  delta -= 1.0
+
+print('%.3f < delta < %.3f'%(np.min(delta), np.max(delta)))
+print('<delta> = %.3f'%np.mean(delta))
+print('shape of the matrix:', delta.shape)
+print('density field data type:', delta.dtype)
