@@ -105,3 +105,12 @@ ax2.set_aspect('equal')
 ax1.imshow(mean_density.T, cmap='gnuplot', vmin=0.0, vmax=1e13, origin='lower')
 ax2.scatter(pos_slide[:,1], pos_slide[:,2], s=0.001, c='r')
 plt.show()
+
+# at this point, delta contains the effective number of particles in each voxel
+# now compute overdensity and density contrast
+delta /= np.mean(delta, dtype=np.float64);  delta -= 1.0
+
+print('%.3f < delta < %.3f'%(np.min(delta), np.max(delta)))
+print('<delta> = %.3f'%np.mean(delta))
+print('shape of the matrix:', delta.shape)
+print('density field data type:', delta.dtype)
