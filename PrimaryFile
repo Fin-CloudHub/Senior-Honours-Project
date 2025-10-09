@@ -169,8 +169,10 @@ def draw_density_field2(ax):
     plt.colorbar(ax.collections[0], cax=ax_cb)
 
     #####################################################
+
     # This method has a runtime that is too long for my laptop to process,
-    # however it is likely better/more detailed than the one used above
+    # however I think it is likely better/more detailed than the one used above
+
     #values = np.vstack([pos_slide[:,1], pos_slide[:,2]])
     #density_values = gaussian_kde(values)(values)
     #kde = kernel.evaluate(kernel)
