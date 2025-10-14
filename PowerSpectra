@@ -1,0 +1,101 @@
+
+import numpy as np
+import readgadget
+import readfof
+import MAS_library as MASL
+import Pk_library as PKL
+import redshift_space_library as RSL
+
+snapshot = '/Users/finlaysime/Desktop/Senior Honour Project/snapdir_004/snap_004'
+snapdir = '/Users/finlaysime/Desktop/Senior Honour Project/halos/1'
+print('Snapshot file imported')
+snapnum = 4
+
+# density field parameters
+grid = 512 #density field will have grid^3 voxels
+MAS = 'CIC' #mass assignment scheme
+verbose = True
+
+# power spectrum parameters
+axis = 0
+threads = 1
+
+# read header
+header   = readgadget.header(snapshot)
+BoxSize  = header.boxsize/1e3  #Mpc/h
+Nall     = header.nall         #Total number of particles
+Masses   = header.massarr*1e10 #Masses of the particles in Msun/h
+Omega_m  = header.omega_m      #value of Omega_m
+Omega_l  = header.omega_l      #value of Omega_l
+h        = header.hubble       #value of h
+redshift = header.redshift     #redshift of the snapshot
+Hubble   = 100.0*np.sqrt(Omega_m*(1.0+redshift)**3+Omega_l)#Value of H(z) in km/s/(Mpc/h)
+
+# read positions of the dark matter particles
+pos = readgadget.read_block(snapshot, "POS ", [1])/1e3 #positions in Mpc/h
+
+#read halo catalogue
+FoF = readfof.FoF_catalog(snapdir, snapnum, long_ids=False, swap=False, SFR=False, read_IDs=False)
+
+#get properties of the halos
+pos_h = FoF.GroupPos/1e3 #Halo positions in Mpc/h
+vel_h = FoF.GroupVel*(1.0+redshift) #Halo peculiar velocities in km/s
+mass_h = FoF.GroupMass*1e10 #Halo masses in Msun/h
+Np_h = FoF.GroupLen #Number of CDM particles in the halo
+
+#move halos into redshift-space. After this call, pos_h will contain the positions of the halos
+#in redshift-space.
+axis = 2 #axis along which to displace halos
+RSL.pos_redshift_space(pos_h, vel_h, BoxSize, Hubble, redshift, axis)
+
+indexes = np.where(mass_h>1e14)[0]
+pos_h = pos_h[indexes]
+vel_h = vel_h[indexes]
+mass_h = mass_h[indexes]
+Np_h = Np_h[indexes]
+
+print('%.3e < Mass M < %.3e Msun/h'%(np.min(mass_h), np.max(mass_h)))
+print('%d halos with masses above 1e14 Msun/h'%pos_h.shape[0])
+
+# define the matrix hosting the density field
+delta = np.zeros((grid,grid,grid), dtype=np.float32)
+
+# construct 3D density field
+MASL.MA(pos, delta, BoxSize, MAS, verbose=verbose)
+
+# compute the overdensity field
+delta /= np.mean(delta, dtype=np.float64);  delta -= 1.0
+
+# print some information
+print('%.3f < delta < %.3f'%(np.min(delta), np.max(delta)))
+print('< delta > = %.3f'%np.mean(delta))
+
+# compute power spectrum
+Pk = PKL.Pk(delta, BoxSize, axis, MAS, threads, verbose)
+
+# 1D P(k)
+k1D      = Pk.k1D
+Pk1D     = Pk.Pk1D
+Nmodes1D = Pk.Nmodes1D
+
+# 2D P(k)
+kpar     = Pk.kpar
+kper     = Pk.kper
+Pk2D     = Pk.Pk2D
+Nmodes2D = Pk.Nmodes2D
+
+# 3D P(k)
+k       = Pk.k3D
+Pk0     = Pk.Pk[:,0] #monopole
+Pk2     = Pk.Pk[:,1] #quadrupole
+Pk4     = Pk.Pk[:,2] #hexadecapole
+Pkphase = Pk.Pkphase #power spectrum of the phases
+Nmodes  = Pk.Nmodes3D
+
+import matplotlib.pyplot as plt
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel(r'$k~[h{\rm Mpc}^{-1}]$')
+plt.ylabel(r'$P(k)~[(h^{-1}{\rm Mpc})^3]$')
+plt.plot(k, Pk0)
+plt.show()
