@@ -1,4 +1,3 @@
-
 ###########################General information###################
 #000 ——> z=3
 #001 ——> z=2
@@ -36,6 +35,8 @@ Hubble   = 100.0*np.sqrt(Omega_m*(1.0+redshift)**3+Omega_l)#Value of H(z) in km/
 pos_CDM = readgadget.read_block(snapshot, "POS ", ptype_CDM)/1e3 #positions in Mpc/h
 vel_CDM = readgadget.read_block(snapshot, "VEL ", ptype_CDM)     #peculiar velocities in km/s
 ids_CDM = readgadget.read_block(snapshot, "ID  ", ptype_CDM)-1
+
+#print(tuple(np.split(readgadget.read_block(snapshot, "VEL ", ptype_Neutrino), 3, 1)))
 
 pos_Neutrino = readgadget.read_block(snapshot, "POS ", ptype_Neutrino)/1e3
 vel_Neutrino = readgadget.read_block(snapshot, "VEL ", ptype_Neutrino)
@@ -95,6 +96,7 @@ print('%.3f < Z < %.3f'%(np.min(pos_CDM_and_Neutrino[:,2]), np.max(pos_CDM_and_N
 delta_pos_CDM = np.zeros((grid_CDM,grid_CDM,grid_CDM), dtype=np.float32)
 delta_pos_Neutrino = np.zeros((grid_N,grid_N,grid_N), dtype=np.float32)
 delta_pos_CDM_and_Neutrino = np.zeros((grid_CDM_N,grid_CDM_N,grid_CDM_N), dtype=np.float32)
+#delta_vel_N = np.zeros((grid_N, grid_N, grid_N), dtype=np.float32)
 
 
 # construct 3D density field
@@ -103,6 +105,7 @@ delta_pos_CDM_and_Neutrino = np.zeros((grid_CDM_N,grid_CDM_N,grid_CDM_N), dtype=
 MASL.MA(pos_CDM, delta_pos_CDM, BoxSize, MAS, verbose=verbose)
 MASL.MA(pos_Neutrino, delta_pos_Neutrino, BoxSize, MAS, verbose=verbose)
 MASL.MA(pos_CDM_and_Neutrino, delta_pos_CDM_and_Neutrino, BoxSize, MAS, verbose=verbose)
+#MASL.MA(vel_Neutrino, delta_vel_N, BoxSize, MAS, verbose=verbose)
 
 # the sum of the values in all voxels should be equal to the number of particles
 print('%.3f should be equal to\n%.3f'%(np.sum(delta_pos_CDM, dtype=np.float64), pos_CDM.shape[0]))
@@ -150,6 +153,8 @@ mean_density_CDM = np.mean(delta_pos_CDM[:Slice_CDM,:,:],axis=0)
 mean_density_Neutrino = np.mean(delta_pos_Neutrino[:Slice_N,:,:],axis=0)
 mean_density_CDM_and_Neutrino = np.mean(delta_pos_CDM_and_Neutrino[:Slice_CDMandN,:,:],axis=0)
 
+#mean_vel_N = np.mean(delta_vel_N[:Slice_N,:,:],axis=0)
+
 print('Image shape:',mean_density_CDM.shape)
 print('%.3e < mass < %.3e'%(np.min(mean_density_CDM), np.max(mean_density_CDM)))
 
@@ -163,9 +168,8 @@ print('%.3f < Z < %.3f'%(np.min(pos_slide_CDM[:,2]), np.max(pos_slide_CDM[:,2]))
 print('')
 
 print("NEUTRINOS:")
-#indexes_Neutrino = np.where((pos_Neutrino[:,0]<slice_thickness_N))
-indexes_Neutrino = np.where((pos_Neutrino[:,0]<10))
-pos_slide_Neutrino = pos_CDM[indexes_Neutrino]
+indexes_Neutrino = np.where((pos_Neutrino[:,0]<slice_thickness_N))
+pos_slide_Neutrino = pos_Neutrino[indexes_Neutrino]
 print('%.3f < X < %.3f'%(np.min(pos_slide_Neutrino[:,0]), np.max(pos_slide_Neutrino[:,0])))
 print('%.3f < Y < %.3f'%(np.min(pos_slide_Neutrino[:,1]), np.max(pos_slide_Neutrino[:,1])))
 print('%.3f < Z < %.3f'%(np.min(pos_slide_Neutrino[:,2]), np.max(pos_slide_Neutrino[:,2])))
@@ -181,13 +185,21 @@ print('%.3f < Y < %.3f'%(np.min(pos_slide_CDM_and_Neutrino[:,1]),
 print('%.3f < Z < %.3f'%(np.min(pos_slide_CDM_and_Neutrino[:,2]),
                          np.max(pos_slide_CDM_and_Neutrino[:,2])))
 
+print("NEUTRINO VELOCITY:")
+vel_slide_Neutrino = vel_Neutrino[indexes_Neutrino]
+print('%.3f < vx < %.3f'%(np.min(vel_slide_Neutrino[:,0]), np.max(vel_slide_Neutrino[:,0])))
+print('%.3f < vy < %.3f'%(np.min(vel_slide_Neutrino[:,1]), np.max(vel_slide_Neutrino[:,1])))
+print('%.3f < vz < %.3f'%(np.min(vel_slide_Neutrino[:,2]), np.max(vel_slide_Neutrino[:,2])))
+
+
+
 #################################Draw Density Fields#####################################
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.stats import *
 from pylab import *
 
-def draw_density_field1(ax, mean_density):
+def draw_density_field1(ax, mean_density, maximum):
     # Creates a gridded 2D slice of the mass-assigned density field
 
     divider = make_axes_locatable(ax)
@@ -196,7 +208,8 @@ def draw_density_field1(ax, mean_density):
     fig = ax.get_figure()
     fig.add_axes(ax_cb)
     
-    im = ax.imshow(mean_density.T, cmap='gnuplot', vmin=0.0, vmax=1e13, origin='lower')
+    im = ax.imshow(mean_density.T, cmap='gnuplot', vmin=0.0, vmax=maximum, origin='lower')
+
     
     plt.colorbar(im, cax=ax_cb)
     ax_cb.yaxis.tick_right()
@@ -228,17 +241,32 @@ def draw_density_field2(ax, pos_slide):
     #ax_cb.yaxis.tick_right()
     ####################################################
     
+    
+def draw_vector_field(ax, pos_slide, vel_slide):
+    
+    ax.scatter(pos_slide[:,1], pos_slide[:,2], s=0.001)
+    
+    ax.quiver(pos_slide[:,1], pos_slide[:,2], vel_slide[:,1], vel_slide[:,2], angles='xy',
+              scale_units='xy', scale=0.1, width=0.001)
+
+
+def draw_scatter(ax):
+    
+    ax.scatter(pos_slide_Neutrino[:,1], pos_slide_Neutrino[:,2], s=0.001)
+    
+    
 def draw_density_fields():
     fig = figure(layout='tight', figsize=(20,20))
     axs = fig.subplot_mosaic([["CDM_1", "CDM_2"],
                          ["Neutrino_1", "Neutrino_2"],
-                         ["CDM&N_1", "CDM&N_2"]])
+                         ["CDM&N_1", "CDM&N_2"],
+                         ["VEL_n", "SCATTER_n"]])
     
     #CDM
     ax_cdm1 = axs["CDM_1"]
     ax_cdm2 = axs["CDM_2"]
     
-    draw_density_field1(ax_cdm1, mean_density_CDM)
+    draw_density_field1(ax_cdm1, mean_density_CDM, maximum=1e13)
     ax_cdm1.set_xlabel('Mpc/h')
     ax_cdm1.set_ylabel('Mpc/h')
     ax_cdm1.set_title("Desnity field of CDM by mass assignment scheme")
@@ -253,7 +281,7 @@ def draw_density_fields():
     ax_neu1 = axs["Neutrino_1"]
     ax_neu2 = axs["Neutrino_2"]
     
-    draw_density_field1(ax_neu1, mean_density_Neutrino)
+    draw_density_field1(ax_neu1, mean_density_Neutrino, maximum=5e13)
     ax_neu1.set_xlabel('Mpc/h')
     ax_neu1.set_ylabel('Mpc/h')
     ax_neu1.set_title("Density field of Neutrinos by mass assignment scheme")
@@ -268,7 +296,7 @@ def draw_density_fields():
     ax_cdmAndN1 = axs["CDM&N_1"]
     ax_cdmAndN2 = axs["CDM&N_2"]
     
-    draw_density_field1(ax_cdmAndN1, mean_density_CDM_and_Neutrino)
+    draw_density_field1(ax_cdmAndN1, mean_density_CDM_and_Neutrino, maximum=1e13)
     ax_cdmAndN1.set_xlabel('Mpc/h')
     ax_cdmAndN1.set_ylabel('Mpc/h')
     ax_cdmAndN1.set_title("Desnity field of CDM & Neutrinos by mass assignment scheme")
@@ -278,6 +306,12 @@ def draw_density_fields():
     ax_cdmAndN2.set_ylabel('Mpc/h')
     ax_cdmAndN2.set_title("Density field of CDM & Neutrinos by plt.hexbin")
     ax_cdmAndN2.set_aspect('equal')
+    
+    ax_vel = axs["VEL_n"]
+    ax_scat = axs["SCATTER_n"]
+    
+    draw_vector_field(ax_vel, pos_slide_Neutrino, vel_slide_Neutrino)
+    draw_scatter(ax_scat)
     
     plt.show()
 
