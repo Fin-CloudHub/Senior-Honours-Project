@@ -35,7 +35,6 @@ pos_CDM = readgadget.read_block(snapshot, "POS ", ptype_CDM)/1e3 #positions in M
 vel_CDM = readgadget.read_block(snapshot, "VEL ", ptype_CDM)     #peculiar velocities in km/s
 ids_CDM = readgadget.read_block(snapshot, "ID  ", ptype_CDM)-1
 
-#print(tuple(np.split(readgadget.read_block(snapshot, "VEL ", ptype_Neutrino), 3, 1)))
 
 pos_Neutrino = readgadget.read_block(snapshot, "POS ", ptype_Neutrino)/1e3
 vel_Neutrino = readgadget.read_block(snapshot, "VEL ", ptype_Neutrino)
@@ -143,7 +142,7 @@ from pylab import *
 fig, (ax1, ax2) = plt.subplots(1, 2)
 fig.subplots_adjust(wspace=1.0)
 
-im1 = ax1.imshow(mean_density_CDM.T, vmin=-1, vmax=10, cmap='bone', origin='lower')
+im1 = ax1.imshow(mean_density_CDM.T, vmin=-1, vmax=5, cmap='bone', origin='lower')
 ax1_divider = make_axes_locatable(ax1)
 cax1 = ax1_divider.append_axes("right", size="5%", pad="2%")
 cb1 = fig.colorbar(im1, cax=cax1, label='rho/<rho>')
