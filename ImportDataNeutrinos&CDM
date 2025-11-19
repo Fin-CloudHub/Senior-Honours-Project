@@ -90,7 +90,7 @@ mean_density = np.mean(delta[:5,:,:],axis=0) #Take the first 5 component along t
 print('Image shape:',mean_density.shape)
 print('%.3e < mass < %.3e'%(np.min(mean_density), np.max(mean_density)))
 
-# now lets consider the particles in that slide
+# consider the particles in that slide
 indexes = np.where((pos_dm[:,0]<10))
 pos_slide = pos_dm[indexes]
 print('%.3f < X < %.3f'%(np.min(pos_slide[:,0]), np.max(pos_slide[:,0])))
@@ -107,8 +107,7 @@ ax1.imshow(mean_density.T, cmap='gnuplot', vmin=0.0, vmax=1e13, origin='lower')
 ax2.scatter(pos_slide[:,1], pos_slide[:,2], s=0.001, c='r')
 plt.show()
 
-# at this point, delta contains the effective number of particles in each voxel
-# now compute overdensity and density contrast
+#   overdensity and density contrast
 delta /= np.mean(delta, dtype=np.float64);  delta -= 1.0
 
 print('%.3f < delta < %.3f'%(np.min(delta), np.max(delta)))
