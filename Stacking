@@ -13,7 +13,7 @@ print("snapshot files imported")
 #[1](CDM), [2](neutrinos) or [1,2](CDM+neutrinos)
      
 ptype_CDM = [1]
-ptype_Neutrino = [1,2]
+ptype_Neutrino = [2]
 
 # read header
 header   = readgadget.header(snapshot)
