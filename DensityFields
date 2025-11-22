@@ -1,17 +1,12 @@
-###########################General information###################
-#000 ——> z=3
-#001 ——> z=2
-#002 ——> z=1
-#003 ——> z=0.5
-#004 ——> z=0
-
-###########################To import the particle data###################
 import readgadget
 import numpy as np
 import MAS_library as MASL
 
 # input files
-snapshot = '/Users/finlaysime/Desktop/Senior Honour Project/snapdir_004/snap_004'
+snapshot_Mn_p = '/ceph/cephfs/agon/quijote/Mn_p/0/snapdir_004/snap_004'
+snapshot_Mn_pp = '/ceph/cephfs/agon/quijote/Mn_pp/0/snapdir_004/snap_004'
+snapshot_Mn_ppp = '/ceph/cephfs/agon/quijote/Mn_ppp/0/snapdir_004/snap_004'
+
 print("snapshot files imported")
 
 #[1](CDM), [2](neutrinos) or [1,2](CDM+neutrinos)
@@ -20,48 +15,131 @@ ptype_CDM = [1]
 ptype_Neutrino = [2]
 
 # read header
-header   = readgadget.header(snapshot)
-BoxSize  = header.boxsize/1e3  #Mpc/h
-Nall     = header.nall         #Total number of particles
-Masses   = header.massarr*1e10 #Masses of the particles in Msun/h
-Omega_m  = header.omega_m      #value of Omega_m
-Omega_l  = header.omega_l      #value of Omega_l
-h        = header.hubble       #value of h
-redshift = header.redshift     #redshift of the snapshot
+header_p   = readgadget.header(snapshot_Mn_p)
+BoxSize  = header_p.boxsize/1e3  #Mpc/h
+Nall     = header_p.nall         #Total number of particles
+Masses   = header_p.massarr*1e10 #Masses of the particles in Msun/h
+Omega_m  = header_p.omega_m      #value of Omega_m
+Omega_l  = header_p.omega_l      #value of Omega_l
+h        = header_p.hubble       #value of h
+redshift = header_p.redshift     #redshift of the snapshot
 Hubble   = 100.0*np.sqrt(Omega_m*(1.0+redshift)**3+Omega_l)#Value of H(z) in km/s/(Mpc/h)
 
 # read positions, velocities and IDs of the particles
-pos_CDM = readgadget.read_block(snapshot, "POS ", ptype_CDM)/1e3 #positions in Mpc/h
-vel_CDM = readgadget.read_block(snapshot, "VEL ", ptype_CDM)     #peculiar velocities in km/s
-ids_CDM = readgadget.read_block(snapshot, "ID  ", ptype_CDM)-1
+pos_CDM_p = readgadget.read_block(snapshot_Mn_p, "POS ", ptype_CDM)/1e3 #positions in Mpc/h
+vel_CDM_p = readgadget.read_block(snapshot_Mn_p, "VEL ", ptype_CDM)     #peculiar velocities in km/s
+ids_CDM_p = readgadget.read_block(snapshot_Mn_p, "ID  ", ptype_CDM)-1
 
 
-pos_Neutrino = readgadget.read_block(snapshot, "POS ", ptype_Neutrino)/1e3
-vel_Neutrino = readgadget.read_block(snapshot, "VEL ", ptype_Neutrino)
-ids_Neutrino = readgadget.read_block(snapshot, "ID  ", ptype_Neutrino)-1
+pos_Neutrino_p = readgadget.read_block(snapshot_Mn_p, "POS ", ptype_Neutrino)/1e3
+vel_Neutrino_p = readgadget.read_block(snapshot_Mn_p, "VEL ", ptype_Neutrino)
+ids_Neutrino_p = readgadget.read_block(snapshot_Mn_p, "ID  ", ptype_Neutrino)-1
+
+# read header
+header_pp   = readgadget.header(snapshot_Mn_pp)
+BoxSize  = header_pp.boxsize/1e3  #Mpc/h
+Nall     = header_pp.nall         #Total number of particles
+Masses   = header_pp.massarr*1e10 #Masses of the particles in Msun/h
+Omega_m  = header_pp.omega_m      #value of Omega_m
+Omega_l  = header_pp.omega_l      #value of Omega_l
+h        = header_pp.hubble       #value of h
+redshift = header_pp.redshift     #redshift of the snapshot
+Hubble   = 100.0*np.sqrt(Omega_m*(1.0+redshift)**3+Omega_l)#Value of H(z) in km/s/(Mpc/h)
+
+# read positions, velocities and IDs of the particles
+pos_CDM_pp = readgadget.read_block(snapshot_Mn_pp, "POS ", ptype_CDM)/1e3 #positions in Mpc/h
+vel_CDM_pp = readgadget.read_block(snapshot_Mn_pp, "VEL ", ptype_CDM)     #peculiar velocities in km/s
+ids_CDM_pp = readgadget.read_block(snapshot_Mn_pp, "ID  ", ptype_CDM)-1
+
+
+pos_Neutrino_pp = readgadget.read_block(snapshot_Mn_pp, "POS ", ptype_Neutrino)/1e3
+vel_Neutrino_pp = readgadget.read_block(snapshot_Mn_pp, "VEL ", ptype_Neutrino)
+ids_Neutrino_pp = readgadget.read_block(snapshot_Mn_pp, "ID  ", ptype_Neutrino)-1
+
+# read header
+header_ppp   = readgadget.header(snapshot_Mn_ppp)
+BoxSize  = header_ppp.boxsize/1e3  #Mpc/h
+Nall     = header_ppp.nall         #Total number of particles
+Masses   = header_ppp.massarr*1e10 #Masses of the particles in Msun/h
+Omega_m  = header_ppp.omega_m      #value of Omega_m
+Omega_l  = header_ppp.omega_l      #value of Omega_l
+h        = header_ppp.hubble       #value of h
+redshift = header_ppp.redshift     #redshift of the snapshot
+Hubble   = 100.0*np.sqrt(Omega_m*(1.0+redshift)**3+Omega_l)#Value of H(z) in km/s/(Mpc/h)
+
+# read positions, velocities and IDs of the particles
+pos_CDM_ppp = readgadget.read_block(snapshot_Mn_ppp, "POS ", ptype_CDM)/1e3 #positions in Mpc/h
+vel_CDM_ppp = readgadget.read_block(snapshot_Mn_ppp, "VEL ", ptype_CDM)     #peculiar velocities in km/s
+ids_CDM_ppp = readgadget.read_block(snapshot_Mn_ppp, "ID  ", ptype_CDM)-1
+
+
+pos_Neutrino_ppp = readgadget.read_block(snapshot_Mn_ppp, "POS ", ptype_Neutrino)/1e3
+vel_Neutrino_ppp = readgadget.read_block(snapshot_Mn_ppp, "VEL ", ptype_Neutrino)
+ids_Neutrino_ppp = readgadget.read_block(snapshot_Mn_ppp, "ID  ", ptype_Neutrino)-1
 
 print("Positions & velocities acquired")
 
 #############################To get the halo catalog######################################
-f_catalog = '/Users/finlaysime/Desktop/Senior Honour Project/halos/1/out_4_pid.list' 
+f_catalog_p = '/ceph/cephfs/agon/quijote/Mn_p/halos/0/out_4_pid.list'
+f_catalog_pp = '/ceph/cephfs/agon/quijote/Mn_p/halos/0/out_4_pid.list'
+f_catalog_ppp = '/ceph/cephfs/agon/quijote/Mn_p/halos/0/out_4_pid.list'
 
 # read the halo catalog
-data = np.loadtxt(f_catalog)
+data_p = np.loadtxt(f_catalog_p)
+data_pp = np.loadtxt(f_catalog_pp)
+data_ppp = np.loadtxt(f_catalog_ppp)
+
 print("Halo data imported")
 
-pid  = data[:,41]
-idx = pid == -1  #ids of the halos
-data_halo = data[idx]
+pid_p = data_p[:,41]
+idx_p = pid_p == -1  #ids of the halos
+data_halo_p = data_p[idx_p]
+
+pid_pp = data_pp[:,41]
+idx_pp = pid_pp == -1
+data_halo_pp = data_pp[idx_pp]
+
+pid_ppp = data_ppp[:,41]
+idx_ppp = pid_ppp == -1  #ids of the halos
+data_halo_ppp = data_ppp[idx_ppp]
 
 #Units: Masses in Msun / h
 #Units: Positions in Mpc / h (comoving)
 #Units: Velocities in km / s (physical, peculiar)
 #BoxSize=1000.0
 
-halo_pos = data_halo[:,8:11]
-halo_velocity = data_halo[:,11:14]
-halo_mass = data_halo[:,2]
+halo_pos_p = data_halo_p[:,8:11]
+halo_velocity_p = data_halo_p[:,11:14]
+halo_mass_p = data_halo_p[:,2]
+
+halo_pos_pp = data_halo_pp[:,8:11]
+halo_velocity_pp = data_halo_pp[:,11:14]
+halo_mass_pp = data_halo_pp[:,2]
+
+halo_pos_ppp = data_halo_ppp[:,8:11]
+halo_velocity_ppp = data_halo_ppp[:,11:14]
+halo_mass_ppp = data_halo_ppp[:,2]
 print("Halo positions, velocites, & masses acquired")
+
+halo_filter = 1e14 #Solar Masses
+
+# Filter out halos with less mass than 1e14 solar masses
+idx = np.where(halo_mass_p > halo_filter)
+halo_mass_p = halo_mass_p[idx]
+halo_pos_p = halo_pos_p[idx]
+halo_vel_p = halo_velocity_p[idx]
+
+idx = np.where(halo_mass_pp > halo_filter)
+halo_mass_pp = halo_mass_pp[idx]
+halo_pos_pp = halo_pos_pp[idx]
+halo_vel_pp = halo_velocity_pp[idx]
+
+idx = np.where(halo_mass_ppp > halo_filter)
+halo_mass_ppp = halo_mass_ppp[idx]
+halo_pos_ppp = halo_pos_ppp[idx]
+halo_vel_ppp = halo_velocity_ppp[idx]
+
+print(f"Halos with mass less than {halo_filter} solar masses removed!")
 
 #############################Build density field######################################
 grid_CDM = int(input("Grid size CDM: ")) #the density field will have grid^3 voxels
@@ -71,31 +149,45 @@ do_RSD = False # Dont do redshift-space distortions
 axis = 0 #axis along which place RSD; not used here
 verbose = True #whether to print information about progress
 
-#Print some information
+# print some information
 print('BoxSize: %.3f Mpc/h'%BoxSize)
 print('Redshift: %.3f'%redshift)
 print('CDM:')
-print('%.3f < X < %.3f'%(np.min(pos_CDM[:,0]), np.max(pos_CDM[:,0])))
-print('%.3f < Y < %.3f'%(np.min(pos_CDM[:,1]), np.max(pos_CDM[:,1])))
-print('%.3f < Z < %.3f'%(np.min(pos_CDM[:,2]), np.max(pos_CDM[:,2])))
+print('%.3f < X < %.3f'%(np.min(pos_CDM_p[:,0]), np.max(pos_CDM_p[:,0])))
+print('%.3f < Y < %.3f'%(np.min(pos_CDM_p[:,1]), np.max(pos_CDM_p[:,1])))
+print('%.3f < Z < %.3f'%(np.min(pos_CDM_p[:,2]), np.max(pos_CDM_p[:,2])))
 print('NEUTRINOS:')
-print('%.3f < X < %.3f'%(np.min(pos_Neutrino[:,0]), np.max(pos_Neutrino[:,0])))
-print('%.3f < Y < %.3f'%(np.min(pos_Neutrino[:,1]), np.max(pos_Neutrino[:,1])))
-print('%.3f < Z < %.3f'%(np.min(pos_Neutrino[:,2]), np.max(pos_Neutrino[:,2])))
+print('%.3f < X < %.3f'%(np.min(pos_Neutrino_p[:,0]), np.max(pos_Neutrino_p[:,0])))
+print('%.3f < Y < %.3f'%(np.min(pos_Neutrino_p[:,1]), np.max(pos_Neutrino_p[:,1])))
+print('%.3f < Z < %.3f'%(np.min(pos_Neutrino_p[:,2]), np.max(pos_Neutrino_p[:,2])))
 
-# Compute the effective number of particles/mass in each voxel
-delta_pos_CDM = MASL.density_field_gadget(snapshot, ptype_CDM, grid_CDM, MAS, do_RSD, axis, verbose)
-delta_pos_Neutrino = MASL.density_field_gadget(snapshot, ptype_Neutrino, grid_N, MAS, do_RSD, axis, verbose)
+# compute the effective number of particles in each voxel
+delta_pos_CDM_p = MASL.density_field_gadget(snapshot_Mn_p, ptype_CDM, grid_CDM, MAS, do_RSD, axis, verbose)
+delta_pos_Neutrino_p = MASL.density_field_gadget(snapshot_Mn_p, ptype_Neutrino, grid_N, MAS, do_RSD, axis, verbose)
 
-# compute the density contrast
-delta_pos_CDM /= np.mean(delta_pos_CDM, dtype=np.float64); delta_pos_CDM -= 1
-delta_pos_Neutrino /= np.mean(delta_pos_Neutrino, dtype=np.float64); delta_pos_Neutrino -= 1
+delta_pos_CDM_pp = MASL.density_field_gadget(snapshot_Mn_pp, ptype_CDM, grid_CDM, MAS, do_RSD, axis, verbose)
+delta_pos_Neutrino_pp = MASL.density_field_gadget(snapshot_Mn_pp, ptype_Neutrino, grid_N, MAS, do_RSD, axis, verbose)
 
+delta_pos_CDM_ppp = MASL.density_field_gadget(snapshot_Mn_ppp, ptype_CDM, grid_CDM, MAS, do_RSD, axis, verbose)
+delta_pos_Neutrino_ppp = MASL.density_field_gadget(snapshot_Mn_ppp, ptype_Neutrino, grid_N, MAS, do_RSD, axis, verbose)
 
+# compute the density contrast (aka overdensity)
+delta_pos_CDM_p /= np.mean(delta_pos_CDM_p, dtype=np.float64); delta_pos_CDM_p -= 1
+delta_pos_Neutrino_p /= np.mean(delta_pos_Neutrino_p, dtype=np.float64); delta_pos_Neutrino_p -= 1
+
+delta_pos_CDM_pp /= np.mean(delta_pos_CDM_pp, dtype=np.float64); delta_pos_CDM_pp -= 1
+delta_pos_Neutrino_pp /= np.mean(delta_pos_Neutrino_pp, dtype=np.float64); delta_pos_Neutrino_pp -= 1
+
+delta_pos_CDM_ppp /= np.mean(delta_pos_CDM_ppp, dtype=np.float64); delta_pos_CDM_ppp -= 1
+delta_pos_Neutrino_ppp /= np.mean(delta_pos_Neutrino_ppp, dtype=np.float64); delta_pos_Neutrino_ppp -= 1
+
+#print voxel sizes
 size_CDM = BoxSize / grid_CDM
 size_N = BoxSize / grid_N
 print(f"Voxel size in CDM is {size_CDM}Mpc/h")
 print(f"Voxel size in Neutrinos is {size_N}Mpc/h")
+
+# create slice thickness
 while True:
     Slice_CDM = int(input("No. of slices for CDM: "))
     Slice_N = int(input("No. of slices for Neutrinos: "))
@@ -110,52 +202,142 @@ slice_thickness_N = Slice_N * size_N
 print(f"CDM slice thickness: {slice_thickness_CDM} Mpc/h")
 print(f"Neutrino slice thickness: {slice_thickness_N} Mpc/h")
 
-#Take the first 5 components along the first axis and compute the mean value
-mean_density_CDM = np.mean(delta_pos_CDM[:Slice_CDM,:,:],axis=0)
-mean_density_Neutrino = np.mean(delta_pos_Neutrino[:Slice_N,:,:],axis=0)
+#compute the mean along the x-axis for the slice
+mean_density_CDM_p = np.mean(delta_pos_CDM_p[:Slice_CDM,:,:],axis=0)
+mean_density_Neutrino_p = np.mean(delta_pos_Neutrino_p[:Slice_N,:,:],axis=0)
 
-print('Image shape:',mean_density_CDM.shape)
-print('%.3e < mass < %.3e'%(np.min(mean_density_CDM), np.max(mean_density_CDM)))
+mean_density_CDM_pp = np.mean(delta_pos_CDM_pp[:Slice_CDM,:,:],axis=0)
+mean_density_Neutrino_pp = np.mean(delta_pos_Neutrino_pp[:Slice_N,:,:],axis=0)
+
+mean_density_CDM_ppp = np.mean(delta_pos_CDM_ppp[:Slice_CDM,:,:],axis=0)
+mean_density_Neutrino_ppp = np.mean(delta_pos_Neutrino_ppp[:Slice_N,:,:],axis=0)
+
+print('Image shape:',mean_density_CDM_p.shape)
+print('%.3e < mass < %.3e'%(np.min(mean_density_CDM_p), np.max(mean_density_CDM_p)))
 
 print("CDM:")
-# now lets consider the particles in that slide
-indexes_CDM = np.where((pos_CDM[:,0]<slice_thickness_CDM))
-pos_slide_CDM = pos_CDM[indexes_CDM]
-print('%.3f < X < %.3f'%(np.min(pos_slide_CDM[:,0]), np.max(pos_slide_CDM[:,0])))
-print('%.3f < Y < %.3f'%(np.min(pos_slide_CDM[:,1]), np.max(pos_slide_CDM[:,1])))
-print('%.3f < Z < %.3f'%(np.min(pos_slide_CDM[:,2]), np.max(pos_slide_CDM[:,2])))
+# filter out particles in slice
+indexes_CDM_p = np.where((pos_CDM_p[:,0]<slice_thickness_CDM))
+pos_slide_CDM_p = pos_CDM_p[indexes_CDM_p]
+print('%.3f < X < %.3f'%(np.min(pos_slide_CDM_p[:,0]), np.max(pos_slide_CDM_p[:,0])))
+print('%.3f < Y < %.3f'%(np.min(pos_slide_CDM_p[:,1]), np.max(pos_slide_CDM_p[:,1])))
+print('%.3f < Z < %.3f'%(np.min(pos_slide_CDM_p[:,2]), np.max(pos_slide_CDM_p[:,2])))
 print('')
 
 print("NEUTRINOS:")
-indexes_Neutrino = np.where((pos_Neutrino[:,0]<slice_thickness_N))
-pos_slide_Neutrino = pos_Neutrino[indexes_Neutrino]
-print('%.3f < X < %.3f'%(np.min(pos_slide_Neutrino[:,0]), np.max(pos_slide_Neutrino[:,0])))
-print('%.3f < Y < %.3f'%(np.min(pos_slide_Neutrino[:,1]), np.max(pos_slide_Neutrino[:,1])))
-print('%.3f < Z < %.3f'%(np.min(pos_slide_Neutrino[:,2]), np.max(pos_slide_Neutrino[:,2])))
+indexes_Neutrino_p = np.where((pos_Neutrino_p[:,0]<slice_thickness_N))
+pos_slide_Neutrino_p = pos_Neutrino_p[indexes_Neutrino_p]
+print('%.3f < X < %.3f'%(np.min(pos_slide_Neutrino_p[:,0]), np.max(pos_slide_Neutrino_p[:,0])))
+print('%.3f < Y < %.3f'%(np.min(pos_slide_Neutrino_p[:,1]), np.max(pos_slide_Neutrino_p[:,1])))
+print('%.3f < Z < %.3f'%(np.min(pos_slide_Neutrino_p[:,2]), np.max(pos_slide_Neutrino_p[:,2])))
 
+# filter out halo positions for the slice
+indexes_halo_p_N = np.where(halo_pos_p[:,0] < slice_thickness_N)
+pos_slide_halo_p_N = halo_pos_p[indexes_halo_p_N]
+indexes_halo_p_CDM = np.where(halo_pos_p[:,0] < slice_thickness_N)
+pos_slide_halo_p_CDM = halo_pos_p[indexes_halo_p_CDM]
+
+indexes_halo_pp_N = np.where(halo_pos_pp[:,0] < slice_thickness_N)
+pos_slide_halo_pp_N = halo_pos_pp[indexes_halo_pp_N]
+indexes_halo_pp_CDM = np.where(halo_pos_pp[:,0] < slice_thickness_N)
+pos_slide_halo_pp_CDM = halo_pos_pp[indexes_halo_pp_CDM]
+
+indexes_halo_ppp_N = np.where(halo_pos_ppp[:,0] < slice_thickness_N)
+pos_slide_halo_ppp_N = halo_pos_ppp[indexes_halo_ppp_N]
+indexes_halo_ppp_CDM = np.where(halo_pos_ppp[:,0] < slice_thickness_N)
+pos_slide_halo_ppp_CDM = halo_pos_ppp[indexes_halo_ppp_CDM]
+
+# scale the size of the halo point by mass
+area_p_N = halo_mass_p[indexes_halo_p_N]/5e13
+area_p_CDM = halo_mass_p[indexes_halo_p_CDM]/5e13
+
+area_pp_N = halo_mass_pp[indexes_halo_pp_N]/5e13
+area_pp_CDM = halo_mass_pp[indexes_halo_pp_CDM]/5e13
+
+area_ppp_N = halo_mass_ppp[indexes_halo_ppp_N]/5e13
+area_ppp_CDM = halo_mass_ppp[indexes_halo_ppp_CDM]/5e13
+
+# set up voxel sizes for each particle type
+L_CDM = BoxSize/grid_CDM
+L_N = BoxSize/grid_N
 
 #################################Draw Density Fields#####################################
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from pylab import *
 
-fig, (ax1, ax2) = plt.subplots(1, 2)
-fig.subplots_adjust(wspace=1.0)
 
-im1 = ax1.imshow(mean_density_CDM.T, vmin=-1, vmax=5, cmap='bone', origin='lower')
-ax1_divider = make_axes_locatable(ax1)
-cax1 = ax1_divider.append_axes("right", size="5%", pad="2%")
-cb1 = fig.colorbar(im1, cax=cax1, label='rho/<rho>')
-ax1.set_xlabel('Voxel no.')
-ax1.set_ylabel('Voxel no.')
-ax1.set_title('Overdensity field of CDM')
+fig = plt.figure(figsize=(12, 16))
 
-im2 = ax2.imshow(mean_density_Neutrino.T, cmap='plasma', origin='lower')
-ax2_divider = make_axes_locatable(ax2)
-cax2 = ax2_divider.append_axes("right", size='5%', pad='2%')
-cb2 = fig.colorbar(im2, cax=cax2, label='rho/<rho>')
-ax2.set_xlabel('Voxel no.')
-ax2.set_ylabel('Voxel no.')
-ax2.set_title('Overdensity field of Neutrinos')
+# Create layout of plots
+mosaic = [
+    ["CDM_p",   "Nu_p"],
+    ["CDM_pp",  "Nu_pp"],
+    ["CDM_ppp", "Nu_ppp"]
+]
+
+ax = fig.subplot_mosaic(mosaic, empty_sentinel=None)
+fig.subplots_adjust(wspace=0.35, hspace=0.35)
+
+# create function to organise each mosaic panel (one for cdm and one for neutrinos)
+def plot_field_cdm(ax_handle, data, grid, L, halo, mass):
+
+    # plot data
+    im = ax_handle.imshow(data.T, vmin=-1, vmax=5, cmap='plasma', origin='lower')
+    ax_handle.scatter(halo[:,1]/L, halo[:,2]/L, c='g', s=mass)
+
+    # set up colorbars
+    divider = make_axes_locatable(ax_handle)
+    cax = divider.append_axes("right", size="5%", pad="2%")
+    fig.colorbar(im, cax=cax, label='\u03C1 / \u03C1\u0304')
+
+    # relable ticks from voxel co-ords to Mpc/h
+    ticks = np.linspace(0, grid, 3)
+    tick_labels = [f"{i * L:.1f}" for i in ticks]
+
+    ax_handle.set_xticks(ticks)
+    ax_handle.set_yticks(ticks)
+    ax_handle.set_xticklabels(tick_labels)
+    ax_handle.set_yticklabels(tick_labels)
+
+    ax_handle.set_xlabel("Y (Mpc/h)")
+    ax_handle.set_ylabel("Z (Mpc/h)")
+
+    return im
+
+def plot_field_n(ax_handle, data, grid, L, halo, mass):
+    
+    im = ax_handle.imshow(data.T, cmap='plasma', origin='lower')
+    ax_handle.scatter(halo[:,1]/L, halo[:,2]/L, c='g', s=mass)
+
+    # set up colorbars
+    divider = make_axes_locatable(ax_handle)
+    cax = divider.append_axes("right", size="5%", pad="2%")
+    fig.colorbar(im, cax=cax, label='\u03C1 / \u03C1\u0304')
+
+    ticks = np.linspace(0, grid, 3)
+    tick_labels = [f"{i * L:.1f}" for i in ticks]
+
+    ax_handle.set_xticks(ticks)
+    ax_handle.set_yticks(ticks)
+    ax_handle.set_xticklabels(tick_labels)
+    ax_handle.set_yticklabels(tick_labels)
+
+    ax_handle.set_xlabel("Y (Mpc/h)")
+    ax_handle.set_ylabel("Z (Mpc/h)")
+
+    return im
+
+#Mn_p
+plot_field_cdm(ax["CDM_p"], mean_density_CDM_p, grid_CDM, L_CDM, pos_slide_halo_p_CDM, area_p_CDM)
+plot_field_n(ax["Nu_p"], mean_density_Neutrino_p, grid_N, L_N, pos_slide_halo_p_N, area_p_CDM)
+
+#Mn_pp
+plot_field_cdm(ax["CDM_pp"], mean_density_CDM_pp, grid_CDM, L_CDM, pos_slide_halo_pp_CDM, area_pp_CDM)
+plot_field_n(ax["Nu_pp"], mean_density_Neutrino_pp,  grid_N, L_N, pos_slide_halo_pp_N, area_pp_N)
+
+#Mn_ppp
+plot_field_cdm(ax["CDM_ppp"], mean_density_CDM_ppp, grid_CDM, L_CDM, pos_slide_halo_ppp_CDM, area_ppp_CDM)
+plot_field_n(ax["Nu_ppp"], mean_density_Neutrino_ppp, grid_N, L_N, pos_slide_halo_ppp_N, area_ppp_N)
 
 plt.show()
