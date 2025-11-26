@@ -12,7 +12,7 @@ import numpy as np
 import MAS_library as MASL
 
 # input files
-snapshot = '/Users/finlaysime/Desktop/Senior Honour Project/snapdir_004/snap_004'
+snapshot = #Particle data directory here eg. '/.../snapdir_004/snap_004'
 ptype    = [1,2] #[1](CDM), [2](neutrinos) or [1,2](CDM+neutrinos)
 print("Snapshot files imported")
 
@@ -35,7 +35,7 @@ print("Positions & velocities acquired")
 
 #############################To get the halo catalog######################################
 
-f_catalog = '/Users/finlaysime/Desktop/Senior Honour Project/halos/1/out_4_pid.list' 
+f_catalog = # Halo directory here eg. '/.../halos/1/out_4_pid.list' 
 
 # read the halo catalog
 data = np.loadtxt(f_catalog)
@@ -107,7 +107,7 @@ ax1.imshow(mean_density.T, cmap='gnuplot', vmin=0.0, vmax=1e13, origin='lower')
 ax2.scatter(pos_slide[:,1], pos_slide[:,2], s=0.001, c='r')
 plt.show()
 
-#   overdensity and density contrast
+#   overdensity / density contrast
 delta /= np.mean(delta, dtype=np.float64);  delta -= 1.0
 
 print('%.3f < delta < %.3f'%(np.min(delta), np.max(delta)))
