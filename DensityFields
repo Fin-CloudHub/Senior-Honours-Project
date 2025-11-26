@@ -3,9 +3,9 @@ import numpy as np
 import MAS_library as MASL
 
 # input files
-snapshot_Mn_p = '/ceph/cephfs/agon/quijote/Mn_p/0/snapdir_004/snap_004'
-snapshot_Mn_pp = '/ceph/cephfs/agon/quijote/Mn_pp/0/snapdir_004/snap_004'
-snapshot_Mn_ppp = '/ceph/cephfs/agon/quijote/Mn_ppp/0/snapdir_004/snap_004'
+snapshot_Mn_p = # 0.1 eV neutrino mass particle data here eg. '/.../Mn_p/0/snapdir_004/snap_004'
+snapshot_Mn_pp = # 0.2 eV neutrino mass particle data here eg. '/.../Mn_pp/0/snapdir_004/snap_004'
+snapshot_Mn_ppp = # 0.4 eV neutrino mass particle data here eg. '/.../Mn_ppp/0/snapdir_004/snap_004'
 
 print("snapshot files imported")
 
