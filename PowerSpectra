@@ -6,8 +6,8 @@ import MAS_library as MASL
 import Pk_library as PKL
 import redshift_space_library as RSL
 
-snapshot = '/Users/finlaysime/Desktop/Senior Honour Project/snapdir_004/snap_004'
-snapdir = '/Users/finlaysime/Desktop/Senior Honour Project/halos/1'
+snapshot = # Particle data directory here eg. '/.../snapdir_004/snap_004'
+snapdir = # Halo directory here eg. '/.../halos/1'
 print('Snapshot file imported')
 snapnum = 4
 
