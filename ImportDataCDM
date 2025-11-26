@@ -11,7 +11,7 @@ import numpy as np
 import MAS_library as MASL
 
 # input files
-snapshot = '/Users/finlaysime/Desktop/Senior Honour Project/snapdir_004/snap_004'
+snapshot = #particle data directory here eg. '/.../snapdir_004/snap_004'
 ptype    = [1] #[1](CDM), [2](neutrinos) or [1,2](CDM+neutrinos)
 print("Snapshot files imported")
 
@@ -34,7 +34,7 @@ print("Positions & velocities acquired")
 
 #############################To get the halo catalog######################################
 
-f_catalog = '/Users/finlaysime/Desktop/Senior Honour Project/halos/1/out_4_pid.list' 
+f_catalog = #Halo directory here eg. '/.../halos/1/out_4_pid.list' 
 
 # read the halo catalog
 data = np.loadtxt(f_catalog)
@@ -77,7 +77,7 @@ MASL.MA(pos_dm, delta, BoxSize, MAS, verbose=verbose)
 print('%.3f should be equal to\n%.3f'%(np.sum(delta, dtype=np.float64), pos_dm.shape[0]))
 
 delta *= Masses[1]
-# now check that the mass in the density field is equal to the total mass in the density
+# check that the mass in the density field is equal to the total mass in the density
 # field is equal to the total mass in the simulation
 print('%.3e should be equal to\n%.3e'%(np.sum(delta, dtype=np.float64),
                                        pos_dm.shape[0]*Masses[1]))
@@ -89,7 +89,7 @@ mean_density = np.mean(delta[:5,:,:],axis=0) #Take the first 5 component along t
 print('Image shape:',mean_density.shape)
 print('%.3e < mass < %.3e'%(np.min(mean_density), np.max(mean_density)))
 
-# now lets consider the particles in that slide
+# consider the particles in that slide
 indexes = np.where((pos_dm[:,0]<10))
 pos_slide = pos_dm[indexes]
 print('%.3f < X < %.3f'%(np.min(pos_slide[:,0]), np.max(pos_slide[:,0])))
@@ -106,7 +106,7 @@ ax1.imshow(mean_density.T, cmap='gnuplot', vmin=0.0, vmax=1e13, origin='lower')
 ax2.scatter(pos_slide[:,1], pos_slide[:,2], s=0.001, c='r')
 plt.show()
 
-# at this point, delta contains the effective number of particles in each voxel
+# delta contains the effective number of particles in each voxel
 # now compute overdensity and density contrast
 delta /= np.mean(delta, dtype=np.float64);  delta -= 1.0
 
