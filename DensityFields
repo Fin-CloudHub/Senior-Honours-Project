@@ -80,9 +80,9 @@ ids_Neutrino_ppp = readgadget.read_block(snapshot_Mn_ppp, "ID  ", ptype_Neutrino
 print("Positions & velocities acquired")
 
 #############################To get the halo catalog######################################
-f_catalog_p = '/ceph/cephfs/agon/quijote/Mn_p/halos/0/out_4_pid.list'
-f_catalog_pp = '/ceph/cephfs/agon/quijote/Mn_p/halos/0/out_4_pid.list'
-f_catalog_ppp = '/ceph/cephfs/agon/quijote/Mn_p/halos/0/out_4_pid.list'
+f_catalog_p = # Halo directory here (one for each neutrino mass) eg. '/.../Mn_p/halos/0/out_4_pid.list'
+f_catalog_pp = # Halo directory here eg. '/.../Mn_pp/halos/0/out_4_pid.list'
+f_catalog_ppp = # Halo direrctory here eg. '/.../Mn_ppp/halos/0/out_4_pid.list'
 
 # read the halo catalog
 data_p = np.loadtxt(f_catalog_p)
