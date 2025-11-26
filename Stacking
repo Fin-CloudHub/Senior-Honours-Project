@@ -7,7 +7,7 @@ from pylab import *
 from scipy.ndimage import rotate
 
 # input files
-snapshot = '/Users/finlaysime/Desktop/Senior Honour Project/Mn_p/snapdir_004/snap_004'
+snapshot = # Particle data here eg. '/.../Mn_p/snapdir_004/snap_004'
 print("snapshot files imported")
 
 #[1](CDM), [2](neutrinos) or [1,2](CDM+neutrinos)
@@ -39,7 +39,7 @@ print("Positions & velocities acquired")
 
 #############################To get the halo catalog######################################
 
-f_catalog = '/Users/finlaysime/Desktop/Senior Honour Project/halos/1/out_4_pid.list' 
+f_catalog = # Halo directory here eg. '/.../halos/1/out_4_pid.list' 
 
 # read the halo catalog
 data = np.loadtxt(f_catalog)
